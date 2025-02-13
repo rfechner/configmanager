@@ -1,22 +1,19 @@
 ## Simple Hackable Configmanager
 
 > [!IMPORTANT] 
-> This is a small hackable configuration manager. It *just* does what you expect it to do. Load > from yaml, importing, string interpolation, expanding axes, manual overwrite, yield mutable
+> This is a small hackable configuration manager. It *just* does what you expect it to do. Load > from yaml, [importing](#features---imports), [string interpolation](#features---string-interpolation), [expanding axes](#features---axes), [manual overwrite](#custom-overwrites), yield mutable
 > /immutable dictionaries whose keys you may access by attributes.
 
 ### Basic Usage
 
 ```python
+from your.utils import make_model, make_optim
 from configmanager import load_config, ImmutableAttributDict, AttributeDict
 
-# may return multiple configs, if axes are expanded
-configs : List[AttributeDict] = load_config('tests/model.yaml', make_immutable=False)
+config : AttributeDict = load_config('tests/model.yaml', make_immutable=False)[0]
 
-# make immutable
-immutable_config = configs[0]._immutable_copy()
-
-# make mutable again
-mutable_config = immutable_config._mutable_copy()
+model = make_model(**conf.model.kwargs)
+optimizer = make_optim(**conf.optim.kwargs)
 
 # hashable (for use in jax.jitted regions)
 hash(mutable_config)
@@ -48,7 +45,7 @@ model:
 > [!NOTE] 
 > Per default, all nested dictionaries are merged instead of overwritten. In case you want to specify custom overwrite behaviour, please take a look further down below.
 
-#### Features - Grids 
+#### Features - Axes 
 
 > [!NOTE] 
 > A really nice addition is the use of `expandable axes`. This lets you specify a (nested) grid of axes in a single .yaml file.
@@ -58,10 +55,10 @@ model:
     kwargs:
         __axis__:
             - batchnorm: false
-                use_bottleneck: false
+              use_bottleneck: false
             - batchnorm: true
-                use_bottleneck: false
-                additional_param: 42
+              use_bottleneck: false
+              additional_param: 42
             - {} # defaults
 
 optim:    
