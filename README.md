@@ -1,6 +1,8 @@
 ## Simple Hackable Configmanager
 
-> [!IMPORTANT] This is a small hackable configuration manager. It *just* does what you expect it to do. Load from yaml, importing, string interpolation, expanding axes, manual overwrite, yield mutable/immutable dictionaries whose keys you may access by attributes.
+> [!IMPORTANT] 
+> This is a small hackable configuration manager. It *just* does what you expect it to do. Load > from yaml, importing, string interpolation, expanding axes, manual overwrite, yield mutable
+> /immutable dictionaries whose keys you may access by attributes.
 
 ### Basic Usage
 
@@ -43,11 +45,13 @@ model:
         param2 : "heythere buddy!"
 ```
 
-> [!NOTE] Per default, all nested dictionaries are merged instead of overwritten. In case you want to specify custom overwrite behaviour, please take a look further down below.
+> [!NOTE] 
+> Per default, all nested dictionaries are merged instead of overwritten. In case you want to specify custom overwrite behaviour, please take a look further down below.
 
 #### Features - Grids 
 
-> [!INFO] A really nice addition is the use of `expandable axes`. This lets you specify a (nested) grid of axes in a single .yaml file.
+> [!NOTE] 
+> A really nice addition is the use of `expandable axes`. This lets you specify a (nested) grid of axes in a single .yaml file.
 
 ```yaml
 model:
