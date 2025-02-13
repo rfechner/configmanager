@@ -1,0 +1,7 @@
+__import__ : [
+  "tests/other_kwargs.yaml",
+  "tests/kwargs.yaml"
+]
+
+__overwrite__(hey):
+  'iwantsomething' : 'completetly_different!' 

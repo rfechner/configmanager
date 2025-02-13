@@ -1,0 +1,18 @@
+model:
+  __axis__: 
+    [
+      { kwargs: { a: 1, b: 2 } }, 
+      { kwargs: { __import__: "tests/kwargs.yaml" } }
+    ]
+
+optim:
+  __axis__: 
+    [
+      { kwargs: { a: 1, b: 2 } }, 
+      { __axis__: 
+        [
+          { kwargs: { a: 1, b: 2 } }, 
+          { kwargs: { a: 3, b: 4 } }
+        ] 
+      }
+    ]

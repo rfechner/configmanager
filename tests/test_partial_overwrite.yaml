@@ -1,0 +1,10 @@
+hey:
+  there: "put"
+  pleasedont : "overwriteme!"
+  thanks: "!"
+  
+__import__ : [
+  "tests/other_kwargs.yaml",
+  "tests/kwargs.yaml"
+]
+
