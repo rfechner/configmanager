@@ -1,7 +1,7 @@
 ## Simple Hackable Configmanager
 
 > [!IMPORTANT] 
-> This is a small hackable configuration manager. It *just* does what you expect it to do. Load > from yaml, [importing](#features---imports), [string interpolation](#features---string-interpolation), [expanding axes](#features---axes), [manual overwrite](#custom-overwrites), yield mutable
+> This is a small hackable configuration manager. It *just* does what you expect it to do. Load from json/yaml, [importing](#features---imports), [string interpolation](#features---string-interpolation), [expanding axes](#features---axes), [manual overwrite](#custom-overwrites), yield mutable
 > /immutable dictionaries whose keys you may access by attributes.
 
 ### Basic Usage
