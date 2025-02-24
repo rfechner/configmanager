@@ -1,6 +1,6 @@
 __import__ : [
-  "tests/other_kwargs.yaml",
-  "tests/kwargs.yaml"
+  "configmanager/tests/other_kwargs.yaml",
+  "configmanager/tests/kwargs.yaml"
 ]
 
 __overwrite__(hey):

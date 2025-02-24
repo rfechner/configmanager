@@ -1,8 +1,8 @@
 from typing import *
-from _load import load
-from _structs import *
-from _config import *
-from _eval import extract
+from ._load import load
+from ._structs import *
+from ._config import *
+from ._eval import extract
 
 from copy import deepcopy, copy
 
@@ -56,6 +56,14 @@ def contains_key(node : NodeType | LeafType, key : str) -> bool:
     return found
 
 def parse(current : NodeType | LeafType, curdepth : int, overwrite : bool = False) -> Any:
+
+    config = recursive_parse(current, curdepth, overwrite)
+
+    # remove import statements
+    config = tree_remove(config, remove_key=IMPORT_KEY)
+    return config
+
+def recursive_parse(current : NodeType | LeafType, curdepth : int, overwrite : bool = False) -> Any:
     """
         recurse through the current dictionary | leaftype.
         This implementation overwrites the subdictionaries by default.
@@ -68,11 +76,11 @@ def parse(current : NodeType | LeafType, curdepth : int, overwrite : bool = Fals
         pass # fall through
     elif isinstance(current, list):
         ret = [
-            parse(v, curdepth = curdepth + 1) for v in current
+            recursive_parse(v, curdepth = curdepth + 1) for v in current
         ]
     elif isinstance(current, dict):
         for key, value in current.items():
-            
+
             # check if we should overwrite the sub-tree
             ckey = copy(key)
             match = extract(key, OVERWRITE_PATTERN)
@@ -93,7 +101,7 @@ def parse(current : NodeType | LeafType, curdepth : int, overwrite : bool = Fals
                     imports = []
                     for importstmt in value:
                         imports.append(
-                            parse(
+                            recursive_parse(
                                 load(importstmt), curdepth = curdepth + 1, overwrite=overwrite
                             )
                         )
@@ -102,9 +110,10 @@ def parse(current : NodeType | LeafType, curdepth : int, overwrite : bool = Fals
                         ret = recursive_update(ret, update, overwrite=overwrite)
 
                 elif isinstance(value, str):
-                    update = parse(
+                    update = recursive_parse(
                         load(value), curdepth = curdepth + 1, overwrite=overwrite
                     )
+
                     del ret[key]
                     ret = recursive_update(ret, update, overwrite=overwrite)
                 else:
@@ -114,9 +123,13 @@ def parse(current : NodeType | LeafType, curdepth : int, overwrite : bool = Fals
                     # we should delete the old `__overwrite__(key)` key
                     del ret[ckey]
 
-                ret[key] = parse(
+                update = {
+                    key : recursive_parse(
                     value, curdepth = curdepth + 1, overwrite=overwrite
-                )
+                )}
+
+                ret = recursive_update(ret, update, overwrite=overwrite)
+
     else:
         raise TypeError(f"Encountered Error whily trying to parse value: {value} of type {type(value)}. Allowed types: {Union[LeafType, NodeType]}")
     return ret
@@ -164,4 +177,20 @@ def tree_put(node : NodeType | LeafType, key: str, swaps : List[List[Any]]) -> N
     else:
         raise TypeError(f"Encountered Error while trying to parse node: {node}! Unsupported type: {type(node)}. Allowed types: {Union[LeafType, NodeType]}")
     
+    return ret
+
+def tree_remove(node : NodeType | LeafType, remove_key: str) -> NodeType | LeafType:
+    """
+        Removes every leaf of type key : value where key == `key`.
+    """
+    ret = deepcopy(node)
+    if isinstance(node, dict):
+        for key, value in node.items():
+            if key == remove_key:
+                del ret[key]
+            else:
+                ret[key] = tree_remove(value, remove_key=remove_key)
+    if isinstance(node, list):
+        ret = [tree_remove(value, remove_key=remove_key) for value in node]
+        
     return ret

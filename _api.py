@@ -1,8 +1,8 @@
-from _structs import AttributeDict, ImmutableAttributeDict, recursive_objectify
-from _load import load
-from _eval import apply_map
-from _parse import parse, tree_get, tree_put, contains_key
-from _config import AXIS_KEY
+from ._structs import BaseDict, AttributeDict, ImmutableAttributeDict, recursive_objectify
+from ._load import load
+from ._eval import apply_map
+from ._parse import parse, tree_get, tree_put, contains_key
+from ._config import AXIS_KEY
 
 from typing import *
 from itertools import product
@@ -31,6 +31,7 @@ def load_config(path : Path | str, make_immutable=False) \
     
     d : dict = load(path)
     config : dict = parse(current=d, curdepth=0)
+
     config : dict = apply_map(current=config, global_config=config)
     found_axis_key = contains_key(config, key=AXIS_KEY)
     configs : List[Dict] = [config] 
@@ -66,6 +67,3 @@ def load_config(path : Path | str, make_immutable=False) \
             for config in configs]
     
     return configs
-
-if __name__ == '__main__':
-    configs = load_config('tests/test_force_overwrite.yaml')

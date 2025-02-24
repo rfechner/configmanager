@@ -1,4 +1,4 @@
 __import__ : [
-  'tests/model.yaml',
-  'tests/data.yaml'
+  'configmanager/tests/model.yaml',
+  'configmanager/tests/data.yaml'
 ]

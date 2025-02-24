@@ -1,4 +1,4 @@
-__import__ : ["tests/kwargs.yaml", "tests/other_kwargs.yaml", "tests/model.yaml"]
+__import__ : ["configmanager/tests/kwargs.yaml", "configmanager/tests/other_kwargs.yaml"]
 
 model:
-    __import__ : "tests/kwargs.yaml"
+    __import__ : "configmanager/tests/kwargs.yaml"

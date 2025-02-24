@@ -1,1 +1,1 @@
-__import__ : "tests/circimport_2.yaml"
+__import__ : "configmanager/tests/circimport_2.yaml"

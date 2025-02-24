@@ -1,9 +1,9 @@
 import re
 
 from copy import deepcopy
-from _structs import *
+from ._structs import *
 
-from _config import SINTERP_PATTERN
+from ._config import SINTERP_PATTERN
 
 def extract(string : str, pattern : str = SINTERP_PATTERN) -> Optional[str]:
     match = re.match(pattern=pattern, string=string)
@@ -38,7 +38,7 @@ def apply_map(current : Any, global_config : dict) -> Any:
                 apply_map(v, global_config=global_config) for k, v in current.items() 
         }
     else:
-        raise TypeError(f"Encountered Error whily trying to parse value: {current} of type {type(config)}")
+        raise TypeError(f"Encountered Error whily trying to parse value: {current} of type {type(current)}")
     
     return copy
 

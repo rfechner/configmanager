@@ -2,7 +2,7 @@ model:
   __axis__: 
     [
       { kwargs: { a: 1, b: 2 } }, 
-      { kwargs: { __import__: "tests/kwargs.yaml" } }
+      { kwargs: { __import__: "configmanager/tests/kwargs.yaml" } }
     ]
 
 optim:
