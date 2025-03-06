@@ -68,7 +68,6 @@ def parse(current : NodeType | LeafType, curdepth : int, overwrite : bool = Fals
 def recursive_parse(current : NodeType | LeafType, curdepth : int, overwrite : bool = False) -> Any:
     """
         recurse through the current dictionary | leaftype.
-        This implementation overwrites the subdictionaries by default.
     """
     if curdepth > MAX_RECURSION_DEPTH:
         raise RecursionError("Maximum recursion depth reached! Might have circular import!")
