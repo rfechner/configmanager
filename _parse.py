@@ -59,8 +59,10 @@ def parse(current : NodeType | LeafType, curdepth : int, overwrite : bool = Fals
 
     config = recursive_parse(current, curdepth, overwrite)
 
-    # remove import statements
+    # remove import and overwrite statements, as they should've already been executed.
     config = tree_remove(config, remove_key=IMPORT_KEY)
+    config = tree_remove(config, remove_key=OVERWRITE_KEY)
+
     return config
 
 def recursive_parse(current : NodeType | LeafType, curdepth : int, overwrite : bool = False) -> Any:
@@ -186,7 +188,7 @@ def tree_remove(node : NodeType | LeafType, remove_key: str) -> NodeType | LeafT
     ret = deepcopy(node)
     if isinstance(node, dict):
         for key, value in node.items():
-            if key == remove_key:
+            if key.startswith(remove_key):
                 del ret[key]
             else:
                 ret[key] = tree_remove(value, remove_key=remove_key)

@@ -4,6 +4,7 @@ from ._eval import apply_map
 from ._parse import parse, tree_get, tree_put, contains_key
 from ._config import AXIS_KEY
 
+import sys
 from typing import *
 from itertools import product
 from pathlib import Path
@@ -23,12 +24,10 @@ def load_config(path : Path | str, make_immutable=False) \
         >>> [AttributeDict(...), AttributeDict(...), ...]
         ```
     """
+
     if isinstance(path, str):
         path = Path(path)
 
-    if not path.exists():
-        raise ValueError(f"Path: {path} doesn't exist!")
-    
     d : dict = load(path)
     config : dict = parse(current=d, curdepth=0)
 
