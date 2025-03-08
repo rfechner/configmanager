@@ -35,9 +35,9 @@ def apply_map(current : Any, global_config : dict) -> Any:
             ret = multi_replace(current, replacements, SINTERP_PATTERN)
 
             # in case ret is a single primitive, it's interpreted by re.sub as a string.
-            # hence, we have to cast back to teh dtype in this case.
+            # hence, we have to evaluate the string in case it isn't.
             if (len(replacements) == 1) and not isinstance(replacements[0], str):
-                ret = type(replacements[0])(ret) # cast back to original type.
+                ret = eval(ret)
 
             return ret
         else:
