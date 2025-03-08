@@ -56,6 +56,21 @@ class SimpleTest(unittest.TestCase):
         for d1, d2 in zip(configs, targets):
             self.assertDictEqual(d1.asdict(), d2)
 
+    def test_multisinterp(self):
+        configs = load_config('configmanager/tests/multi_sinterp.yaml')
+        targets = [{
+                    "seed" : 0,
+                    "data": {
+                        "num_classes": 42
+                    },
+                    "model": {
+                        "num_classes": 42,
+                        "checkpoint" : "some/where/0/over/the/42/rainbow.equinox"
+                    }
+                }]
+        for d1, d2 in zip(configs, targets):
+            self.assertDictEqual(d1.asdict(), d2)
+
     def test_import_overwrite(self):
         configs = load_config('configmanager/tests/test_overwrite.yaml')
         targets = [{

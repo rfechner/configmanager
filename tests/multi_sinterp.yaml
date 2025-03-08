@@ -1,0 +1,8 @@
+seed: 0
+
+data:
+  num_classes: 42
+
+model:
+  num_classes: "$(data.num_classes)"
+  checkpoint: "some/where/$(seed)/over/the/$(data.num_classes)/rainbow.equinox"
