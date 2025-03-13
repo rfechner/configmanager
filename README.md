@@ -8,7 +8,9 @@
 
 ```python
 from your.utils import make_model, make_optim
-from rox.configmanager import load_config, ImmutableAttributDict, AttributeDict
+from yourparent.configmanager import (
+    load_config, ImmutableAttributDict, AttributeDict
+)
 
 config : AttributeDict = load_config('tests/model.yaml', make_immutable=False)[0]
 
