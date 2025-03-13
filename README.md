@@ -85,9 +85,18 @@ configs = load_config('tests/model.yaml')
 data:
     shape: [42, 1]
 
+seed: 0
+
+optim:
+    lr: 0.001
+    info: "heytherebuddy"
+
 model:
     kwargs:
         input_shape : "$(data.shape)" # resolves to [42, 1]
+    checkpoint: "run-seed:$(seed)-lr:$(optim.lr)-checkpoint-.pickle" # resolves to "run-seed:0-lr:0.001-checkpoint.pickle"
+
+$(optim.info) : $(optim.info) # resolves to "heytherebuddy" : "heytherebuddy"
 ```
 
 #### Custom Overwrites

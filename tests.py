@@ -56,6 +56,19 @@ class SimpleTest(unittest.TestCase):
         for d1, d2 in zip(configs, targets):
             self.assertDictEqual(d1.asdict(), d2)
 
+    def test_sinterp_key(self):
+        configs = load_config('configmanager/tests/sinterp_key.yaml')
+        targets = [{
+                    "defaults": "parameter",
+                    "other": {
+                        "param": 1
+                    },
+                    "parameter" : 1,
+                    "another" : 1
+                }]
+        for d1, d2 in zip(configs, targets):
+            self.assertDictEqual(d1.asdict(), d2)
+
     def test_multisinterp(self):
         configs = load_config('configmanager/tests/multi_sinterp.yaml')
         targets = [{

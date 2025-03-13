@@ -1,0 +1,8 @@
+defaults: "parameter"
+
+other:
+  param: 1
+
+$(defaults) : 1
+
+another: $(other.param)
