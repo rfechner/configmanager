@@ -8,12 +8,18 @@ from copy import deepcopy, copy
 
 
 
-def recursive_update(current : dict, update : dict, overwrite : bool = False) -> dict:
+def recursive_update(current : dict, update : dict, curdepth : int, overwrite : bool = False) -> dict:
     """
         Recurses through the dictionary `update` and applies changes to
         a copy of `current`.
     """
+    if curdepth > MAX_RECURSION_DEPTH:
+        raise RecursionError
+    
     ret = deepcopy(current)
+    if not isinstance(current, dict):
+        return ret
+    
     for key, value in update.items():
         """
             Two cases:
@@ -29,7 +35,7 @@ def recursive_update(current : dict, update : dict, overwrite : bool = False) ->
             key in ret.keys() and \
             (isinstance(ret[key], dict) and isinstance(value, dict)):
 
-            ret[key] = recursive_update(ret[key], value)
+            ret[key] = recursive_update(ret[key], value, curdepth=curdepth + 1, overwrite=overwrite)
         else:
             ret[key] = value
     return ret
@@ -68,6 +74,7 @@ def parse(current : NodeType | LeafType, curdepth : int, overwrite : bool = Fals
 def recursive_parse(current : NodeType | LeafType, curdepth : int, overwrite : bool = False) -> Any:
     """
         recurse through the current dictionary | leaftype.
+        This implementation overwrites the subdictionaries by default.
     """
     if curdepth > MAX_RECURSION_DEPTH:
         raise RecursionError("Maximum recursion depth reached! Might have circular import!")
@@ -108,7 +115,7 @@ def recursive_parse(current : NodeType | LeafType, curdepth : int, overwrite : b
                         )
                     del ret[key]
                     for update in imports:
-                        ret = recursive_update(ret, update, overwrite=overwrite)
+                        ret = recursive_update(ret, update, curdepth = 1, overwrite=overwrite)
 
                 elif isinstance(value, str):
                     update = recursive_parse(
@@ -116,7 +123,7 @@ def recursive_parse(current : NodeType | LeafType, curdepth : int, overwrite : b
                     )
 
                     del ret[key]
-                    ret = recursive_update(ret, update, overwrite=overwrite)
+                    ret = recursive_update(ret, update, curdepth = 1, overwrite=overwrite)
                 else:
                     raise ValueError("Import Statements can only be a list of strings or a single string!")
             else:
@@ -129,7 +136,7 @@ def recursive_parse(current : NodeType | LeafType, curdepth : int, overwrite : b
                     value, curdepth = curdepth + 1, overwrite=overwrite
                 )}
 
-                ret = recursive_update(ret, update, overwrite=overwrite)
+                ret = recursive_update(ret, update, curdepth = 1, overwrite=overwrite)
 
     else:
         raise TypeError(f"Encountered Error whily trying to parse value: {value} of type {type(value)}. Allowed types: {Union[LeafType, NodeType]}")
@@ -158,26 +165,41 @@ def tree_get(node : NodeType | LeafType, key : str) -> List[List[Any]]:
         raise TypeError(f"Encountered Error while trying to parse node: {node}! Unsupported type: {type(node)}. Allowed types: {Union[LeafType, NodeType]}")
     return ret
 
-def tree_put(node : NodeType | LeafType, key: str, swaps : List[List[Any]]) -> NodeType | LeafType:
+def tree_put(node: NodeType | LeafType, key: str, swaps: List[List[Any]], curdepth=1) -> NodeType | LeafType:
     ret = deepcopy(node)
+    
+    if curdepth > MAX_RECURSION_DEPTH:
+        raise RecursionError
 
     if isinstance(node, LeafType):
-        pass # fall through and return ret, index instantly
+        return ret
     elif isinstance(node, list):
         for i, entry in enumerate(node):
-            out = tree_put(entry, key=key, swaps=swaps)
-            ret[i] = out
+            ret[i] = tree_put(entry, key=key, swaps=swaps, curdepth=curdepth + 1)
     elif isinstance(node, dict):
-        for key, value in node.items():
-            if key == AXIS_KEY:
-                
-                del ret[key] # delete AXIS_KEY key,value pair
-                ret.update(**swaps.pop(0)) # update with new key,value pair
+        """
+            We have to separate deletion, updates and recursive calls to tree_put.
+        """
+        keys_to_delete = []
+        updates = {}
+
+        for k, v in node.items():
+            if k == key:
+                keys_to_delete.append(k)
+                updates.update(swaps.pop(0))
             else:
-                ret[key] = tree_put(value, key=key, swaps=swaps)
+                ret[k] = tree_put(v, key=key, swaps=swaps, curdepth=curdepth + 1)
+
+        # Remove keys marked for deletion
+        for k in keys_to_delete:
+            del ret[k]
+
+        # Apply updates safely
+        ret = recursive_update(ret, updates, curdepth=1)
+
     else:
         raise TypeError(f"Encountered Error while trying to parse node: {node}! Unsupported type: {type(node)}. Allowed types: {Union[LeafType, NodeType]}")
-    
+
     return ret
 
 def tree_remove(node : NodeType | LeafType, remove_key: str) -> NodeType | LeafType:

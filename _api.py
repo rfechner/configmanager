@@ -29,9 +29,7 @@ def load_config(path : Path | str, make_immutable=False) \
         path = Path(path)
 
     d : dict = load(path)
-    config : dict = parse(current=d, curdepth=0)
-
-    config : dict = apply_map(current=config, global_config=config)
+    config : dict = parse(current=d, curdepth=0)    
     found_axis_key = contains_key(config, key=AXIS_KEY)
     configs : List[Dict] = [config] 
 
@@ -49,7 +47,7 @@ def load_config(path : Path | str, make_immutable=False) \
             
             # insert different constellations into base config
             update : List[Dict] = [
-                tree_put(node=config, key=AXIS_KEY, swaps=list(entry)) \
+                tree_put(node=config, key=AXIS_KEY, swaps=list(entry), curdepth=0) \
                     for entry in products
             ]
             updated_configs.extend(update)
@@ -60,6 +58,10 @@ def load_config(path : Path | str, make_immutable=False) \
             contains_key(config, key=AXIS_KEY) for config in configs
         ])
                 
+    # string interpolation
+    configs : List[Dict] = [
+        apply_map(current=config, global_config=config) for config in configs
+    ] 
     # turn dicts into objects
     configs : List[AttributeDict | ImmutableAttributeDict] = \
         [recursive_objectify(config, make_immutable=make_immutable) \
