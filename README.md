@@ -1,13 +1,19 @@
-## Simple Hackable Configmanager
+## gridconf - Simple Hackable Configmanager
 > [!IMPORTANT] 
 > This is a small hackable configuration manager. It *just* does what you expect it to do. Load from json/yaml, [importing](#features---imports), [string interpolation](#features---string-interpolation), [expanding axes](#features---axes), [manual overwrite](#custom-overwrites), yield mutable
 > /immutable dictionaries whose keys you may access by attributes.
+
+### Installation
+
+```bash
+pip install gridconf
+```
 
 ### Basic Usage
 
 ```python
 from your.utils import make_model, make_optim
-from yourparent.configmanager import (
+from gridconf import (
     load_config, ImmutableAttributDict, AttributeDict
 )
 

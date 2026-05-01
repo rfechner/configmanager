@@ -1,4 +1,4 @@
 __import__ : [
-  "configmanager/tests/other_kwargs.yaml",
-  "configmanager/tests/kwargs.yaml"
+  "tests/other_kwargs.yaml",
+  "tests/kwargs.yaml"
 ]

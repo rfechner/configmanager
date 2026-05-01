@@ -1,0 +1,15 @@
+LICENSE
+README.md
+pyproject.toml
+gridconf/__init__.py
+gridconf/_api.py
+gridconf/_config.py
+gridconf/_eval.py
+gridconf/_load.py
+gridconf/_parse.py
+gridconf/_structs.py
+gridconf.egg-info/PKG-INFO
+gridconf.egg-info/SOURCES.txt
+gridconf.egg-info/dependency_links.txt
+gridconf.egg-info/requires.txt
+gridconf.egg-info/top_level.txt

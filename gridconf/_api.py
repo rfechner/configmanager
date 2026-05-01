@@ -8,7 +8,6 @@ import sys
 from typing import *
 from itertools import product
 from pathlib import Path
-from typing import List
 
 def load_config(path : Path | str, make_immutable=False) \
     -> List[AttributeDict | ImmutableAttributeDict]:
@@ -37,34 +36,21 @@ def load_config(path : Path | str, make_immutable=False) \
 
         updated_configs = []
         for config in configs:
-            if not contains_key(config, key=AXIS_KEY):
+            axes = tree_get(node=config, key=AXIS_KEY)
+            if not axes:
                 updated_configs.append(config)
                 continue
-            
-            # get the grid axes
-            axes : List[List[Any]] = tree_get(node=config, key=AXIS_KEY)
-            products : Generator[List[List[Any]]] = product(*axes)
-            
-            # insert different constellations into base config
-            update : List[Dict] = [
-                tree_put(node=config, key=AXIS_KEY, swaps=list(entry), curdepth=0) \
-                    for entry in products
-            ]
-            updated_configs.extend(update)
-            
-        # test if we need to iterate
+            updated_configs.extend(
+                tree_put(node=config, key=AXIS_KEY, swaps=list(entry), curdepth=0)
+                for entry in product(*axes)
+            )
+
         configs = updated_configs
-        found_axis_key = any([
-            contains_key(config, key=AXIS_KEY) for config in configs
-        ])
+        found_axis_key = any(contains_key(config, key=AXIS_KEY) for config in configs)
                 
-    # string interpolation
-    configs : List[Dict] = [
-        apply_map(current=config, global_config=config) for config in configs
-    ] 
-    # turn dicts into objects
-    configs : List[AttributeDict | ImmutableAttributeDict] = \
-        [recursive_objectify(config, make_immutable=make_immutable) \
-            for config in configs]
-    
+    configs = [
+        recursive_objectify(apply_map(config, config), make_immutable=make_immutable)
+        for config in configs
+    ]
+
     return configs

@@ -6,7 +6,6 @@ NodeType = Union[dict, list]
 import json
 import yaml
 from copy import deepcopy
-from typing import Hashable
 
 class BaseDict(dict, Hashable):
     """
@@ -38,17 +37,8 @@ class BaseDict(dict, Hashable):
         return hash(self.__repr__())
     
     def get(self, key, default=None):
-        """
-            For whatever arcane reason
-
-            ```python
-            return super().get(key, default)
-            ```
-
-            just returns None if they key isn't found and not the specified default...
-        """
         result = super().get(key)
-        if not result:
+        if result is None:
             result = default
         return result
 
@@ -106,19 +96,8 @@ class ImmutableAttributeDict(AttributeDict):
         return self._mutable_copy()
     
 def recursive_objectify(nested_dict, make_immutable=True):
-    """
-        Turns a nested_dict into a nested AttributeDict
-    """
-    result = deepcopy(nested_dict)
-    
-    for k, v in result.items():
-        if isinstance(v, dict):
-            result = dict(result)
-            result[k] = recursive_objectify(v, make_immutable)
-    
-    if make_immutable:
-        returned_result = ImmutableAttributeDict(result)
-    else:
-        returned_result = AttributeDict(result)
-    
-    return returned_result
+    cls = ImmutableAttributeDict if make_immutable else AttributeDict
+    return cls({
+        k: recursive_objectify(v, make_immutable) if isinstance(v, dict) else deepcopy(v)
+        for k, v in nested_dict.items()
+    })
